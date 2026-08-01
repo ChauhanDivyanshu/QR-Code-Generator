@@ -1,0 +1,59 @@
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg);
+}
+
+.app-main {
+    flex: 1;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.app-hero {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.app-hero h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-secondary);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.app-hero p {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.upload-section {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .app-main {
+        padding: 24px 16px;
+    }
+
+    .app-hero h1 {
+        font-size: 22px;
+    }
+
+    .app-hero p {
+        font-size: 13px;
+    }
+}

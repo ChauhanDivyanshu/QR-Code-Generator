@@ -1,0 +1,60 @@
+.error-message {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-top: 20px;
+    background: var(--color-danger-light);
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-message-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.error-icon {
+    flex-shrink: 0;
+    color: var(--color-danger);
+    margin-top: 1px;
+}
+
+.error-text {
+    font-size: 14px;
+    color: var(--color-danger);
+    line-height: 1.5;
+}
+
+.error-dismiss {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--color-danger);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.error-dismiss:hover {
+    background: #fecaca;
+}
