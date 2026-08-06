@@ -234,7 +234,6 @@ def start_generation():
         )
         thread.start()
         
-        # Remove from uploaded files (file will be deleted by processor)
         del uploaded_files[upload_id]
         
         return jsonify({
@@ -357,7 +356,6 @@ if __name__ == "__main__":
     print("=" * 65)
     print("")
     
-    # Start cleanup thread
     threading.Thread(target=cleanup_old_uploads, daemon=True).start()
     threading.Thread(target=open_browser, args=(PORT,), daemon=True).start()
     
