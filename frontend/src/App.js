@@ -51,7 +51,6 @@ function App() {
             const data = await previewFile(file);
             setPreviewData(data);
             
-            // Auto-select first column as QR column (smart default)
             if (data.column_names.length > 0) {
                 // Try to find URL column
                 const urlCol = data.columns.find(c => 
