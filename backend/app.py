@@ -41,7 +41,6 @@ CORS(app)
 Config.init_folders()
 
 
-# Store uploaded files temporarily by session
 uploaded_files = {}
 
 
