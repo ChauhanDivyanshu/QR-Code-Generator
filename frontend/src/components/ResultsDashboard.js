@@ -13,77 +13,134 @@ function ResultsDashboard({ data, onReset }) {
             console.error("Failed to open folder:", err);
         }
     };
+    
+    const formatTime = (seconds) => {
+        if (!seconds) return "—";
+        if (seconds < 60) return `${seconds.toFixed(1)}s`;
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}m ${secs}s`;
+    };
 
     return (
         <div className="results-dashboard">
+            {/* Success Banner */}
             <div className="results-success-banner">
-                <div className="success-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" strokeWidth="2">
+                <div className="success-icon-wrapper">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                         <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
                 </div>
-                <h2>Generation Complete</h2>
-                <p>{stats.generated.toLocaleString()} QR codes generated successfully</p>
+                <h2 className="results-title">Generation Complete</h2>
+                <p className="results-subtitle">
+                    {stats.generated.toLocaleString()} QR codes generated successfully
+                </p>
             </div>
 
+            {/* Stats Grid */}
             <div className="results-stats-grid">
-                <div className="result-stat">
-                    <span className="result-stat-value">{stats.total.toLocaleString()}</span>
-                    <span className="result-stat-label">Total Processed</span>
+                <div className="stat-card">
+                    <div className="stat-card-value">{stats.total.toLocaleString()}</div>
+                    <div className="stat-card-label">Total Processed</div>
                 </div>
-                <div className="result-stat result-stat--success">
-                    <span className="result-stat-value">{stats.generated.toLocaleString()}</span>
-                    <span className="result-stat-label">Generated</span>
+                <div className="stat-card stat-card--success">
+                    <div className="stat-card-value">{stats.generated.toLocaleString()}</div>
+                    <div className="stat-card-label">Successfully Generated</div>
                 </div>
                 {stats.failed > 0 && (
-                    <div className="result-stat result-stat--error">
-                        <span className="result-stat-value">{stats.failed.toLocaleString()}</span>
-                        <span className="result-stat-label">Failed</span>
+                    <div className="stat-card stat-card--error">
+                        <div className="stat-card-value">{stats.failed.toLocaleString()}</div>
+                        <div className="stat-card-label">Failed</div>
+                    </div>
+                )}
+                {stats.total_time && (
+                    <div className="stat-card stat-card--info">
+                        <div className="stat-card-value">{formatTime(stats.total_time)}</div>
+                        <div className="stat-card-label">Time Taken</div>
+                    </div>
+                )}
+                {stats.speed > 0 && (
+                    <div className="stat-card stat-card--info">
+                        <div className="stat-card-value">{stats.speed.toLocaleString()}</div>
+                        <div className="stat-card-label">QR per Second</div>
                     </div>
                 )}
             </div>
 
+            {/* Save Location */}
             {save_location && (
-                <div className="save-location-banner">
-                    <div className="save-location-text">
-                        <span className="save-location-label">Files saved to:</span>
-                        <span className="save-location-path">{save_location}</span>
+                <div className="save-location-card">
+                    <div className="save-location-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                        </svg>
+                        <span>Files Saved To</span>
                     </div>
+                    <code className="save-location-path">{save_location}</code>
                 </div>
             )}
 
-            <div className="results-actions-main">
-                <a href={zipUrl} className="btn-primary btn-lg" download>
+            {/* Actions */}
+            <div className="results-actions">
+                <a href={zipUrl} className="btn btn--primary" download>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
                     Download All (ZIP)
                 </a>
-                <button className="btn-secondary btn-lg" onClick={handleOpenFolder}>
+                <button className="btn btn--secondary" onClick={handleOpenFolder}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
                     Open Folder
                 </button>
-                <button className="btn-secondary btn-lg" onClick={onReset}>
+                <button className="btn btn--secondary" onClick={onReset}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="1 4 1 10 7 10" />
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                    </svg>
                     New Upload
                 </button>
             </div>
 
+            {/* Sample Preview */}
             {sample_results && sample_results.length > 0 && (
-                <div className="sample-preview">
-                    <h3 className="sample-title">Sample Preview (First 20)</h3>
+                <div className="sample-preview-section">
+                    <div className="sample-preview-header">
+                        <h3>Sample Preview</h3>
+                        <span className="sample-preview-count">
+                            Showing {Math.min(20, sample_results.length)} of {stats.generated.toLocaleString()}
+                        </span>
+                    </div>
                     <div className="sample-grid">
                         {sample_results.slice(0, 20).map((item, index) => (
                             <div key={index} className="sample-card">
-                                <img
-                                    src={`${getApiBase()}/api/qr/${session_id}/${item.filename}`}
-                                    alt={item.filename}
-                                    loading="lazy"
-                                />
-                                <p className="sample-name">{item.filename}</p>
+                                <div className="sample-card-image">
+                                    <img
+                                        src={`${getApiBase()}/api/qr/${session_id}/${item.filename}`}
+                                        alt={item.filename}
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <div className="sample-card-info">
+                                    <div className="sample-card-index">#{item.index}</div>
+                                    <div className="sample-card-name" title={item.filename}>
+                                        {item.filename}
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
                     <p className="sample-note">
-                        Showing 20 of {stats.generated.toLocaleString()} generated QR codes. 
-                        Download the ZIP to get all files.
+                        Download the ZIP file to get all {stats.generated.toLocaleString()} QR codes
                     </p>
                 </div>
             )}

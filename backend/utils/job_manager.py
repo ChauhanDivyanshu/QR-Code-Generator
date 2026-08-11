@@ -1,7 +1,3 @@
-"""
-Background Job Manager - handles long-running tasks
-"""
-
 import threading
 from datetime import datetime
 

@@ -141,7 +141,7 @@ function App() {
         };
 
         pollStatus();
-        pollingRef.current = setInterval(pollStatus, 2000);
+        pollingRef.current = setInterval(pollStatus, 1000);
 
         return () => {
             if (pollingRef.current) clearInterval(pollingRef.current);
