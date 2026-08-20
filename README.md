@@ -1,10 +1,10 @@
 ﻿# 🚀 QR Code Dashboard:--
 
-QR Code Dashboard is a high-performance bulk QR code generation platform built with **Flask** and **React**. It enables users to upload Excel files and generate **200,000+ QR codes** efficiently with real-time progress tracking and downloadable ZIP packages.
+QR Code Dashboard is a high-performance bulk QR code generation platform built with **Flask** and **React**. It enables users to upload Excel files and generate **600,000+ QR codes** efficiently with real-time progress tracking and downloadable ZIP packages.
 
 ## Features
 
-- 🚀 Generate 200,000+ QR Codes
+- 🚀 Generate 600,000+ QR Codes
 - 📄 Excel File Upload (.xlsx)
 - ⚡ High-Speed Batch Processing
 - 📊 Real-Time Progress Tracking
@@ -18,11 +18,13 @@ QR Code Dashboard is a high-performance bulk QR code generation platform built w
 ## Tech Stack
 
 ### Frontend
+
 - React.js
 - CSS3
 - Axios
 
 ### Backend
+
 - Python
 - Flask
 - OpenPyXL
@@ -30,4 +32,5 @@ QR Code Dashboard is a high-performance bulk QR code generation platform built w
 - Pillow
 
 ### Deployment
+
 - Gunicorn / WSGI
