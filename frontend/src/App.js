@@ -15,7 +15,6 @@ import {
   startGeneration,
 } from "./services/api";
 
-// App States
 const STATES = {
   UPLOAD: "upload",
   UPLOADING: "uploading",
@@ -30,7 +29,8 @@ function App() {
   const [previewData, setPreviewData] = useState(null);
   const [qrColumn, setQrColumn] = useState("");
   const [idColumn, setIdColumn] = useState("");
-  const [qrSize, setQrSize] = useState(8);
+  // STRICT DEFAULT: Medium (Scale 6)
+  const [qrSize, setQrSize] = useState(3);
   const [jobId, setJobId] = useState(null);
   const [jobStatus, setJobStatus] = useState(null);
   const [results, setResults] = useState(null);
@@ -42,7 +42,6 @@ function App() {
     setError(null);
   }, []);
 
-  // Step 1: Upload file for preview
   const handleUploadForPreview = useCallback(async () => {
     if (!file) {
       setError("Please select a file");
@@ -57,13 +56,11 @@ function App() {
       setPreviewData(data);
 
       if (data.column_names.length > 0) {
-        // Try to find URL column
         const urlCol = data.columns.find((c) =>
           c.samples.some((s) => s.includes("http") || s.includes("www")),
         );
         setQrColumn(urlCol ? urlCol.name : data.column_names[0]);
 
-        // Auto-select second column as ID
         if (data.column_names.length > 1) {
           const secondCol = data.column_names.find(
             (c) => c !== (urlCol ? urlCol.name : data.column_names[0]),
@@ -81,7 +78,6 @@ function App() {
     }
   }, [file]);
 
-  // Step 2: Start actual generation
   const handleStartGeneration = useCallback(async () => {
     if (!qrColumn) {
       setError("Please select QR column");
@@ -101,12 +97,13 @@ function App() {
       setState(STATES.PROCESSING);
     } catch (err) {
       const message =
-        err.response?.data?.error || err.message || "Failed to start";
+        err.response?.data?.error ||
+        err.message ||
+        "Failed to start generation";
       setError(message);
     }
   }, [previewData, qrColumn, idColumn, qrSize]);
 
-  // Cancel and go back to upload
   const handleCancelPreview = useCallback(async () => {
     if (previewData?.upload_id) {
       try {
@@ -119,36 +116,44 @@ function App() {
     setState(STATES.UPLOAD);
   }, [previewData]);
 
-  // Poll job status
+  // Live status polling
   useEffect(() => {
     if (!jobId) return;
+
+    let errorCount = 0;
 
     const pollStatus = async () => {
       try {
         const status = await getJobStatus(jobId);
-        setJobStatus(status);
+        if (status) {
+          setJobStatus(status);
+          errorCount = 0;
 
-        if (status.status === "completed") {
-          setResults(status.result);
-          setJobId(null);
-          setState(STATES.RESULTS);
-          clearInterval(pollingRef.current);
-        } else if (status.status === "failed") {
-          setError(status.error || "Job failed");
-          setJobId(null);
-          setState(STATES.UPLOAD);
-          clearInterval(pollingRef.current);
+          if (status.status === "completed") {
+            setResults(status.result);
+            setJobId(null);
+            setState(STATES.RESULTS);
+            if (pollingRef.current) clearInterval(pollingRef.current);
+          } else if (status.status === "failed") {
+            setError(status.error || "Job failed");
+            setJobId(null);
+            setState(STATES.UPLOAD);
+            if (pollingRef.current) clearInterval(pollingRef.current);
+          }
         }
       } catch (err) {
-        setError("Failed to check status");
-        setJobId(null);
-        setState(STATES.UPLOAD);
-        clearInterval(pollingRef.current);
+        errorCount++;
+        console.warn(`Polling retry (${errorCount}/20)...`);
+        if (errorCount >= 20) {
+          setError(
+            "Status updates delayed due to heavy load. QR codes are still generating on your Desktop!",
+          );
+        }
       }
     };
 
     pollStatus();
-    pollingRef.current = setInterval(pollStatus, 1000);
+    pollingRef.current = setInterval(pollStatus, 1200);
 
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
@@ -160,7 +165,8 @@ function App() {
     setPreviewData(null);
     setQrColumn("");
     setIdColumn("");
-    setQrSize(8);
+    // Reset back to Medium (Scale 6)
+    setQrSize(3);
     setJobId(null);
     setJobStatus(null);
     setResults(null);
@@ -173,14 +179,13 @@ function App() {
       <Navbar />
 
       <main className="app-main">
-        {/* State: Upload */}
         {state === STATES.UPLOAD && (
           <>
             <div className="app-hero">
               <h1>QR Code Generator</h1>
               <p>
-                Upload Excel file. Choose columns for QR data and filename.
-                Supports 600,000+ QR codes.
+                Upload Excel file with URLs and Unique IDs. Supports up to
+                650,000+ QR codes with parallel processing.
               </p>
             </div>
 
@@ -207,7 +212,6 @@ function App() {
           </>
         )}
 
-        {/* State: Uploading */}
         {state === STATES.UPLOADING && (
           <div style={{ padding: 40, textAlign: "center" }}>
             <LoadingSpinner />
@@ -217,7 +221,6 @@ function App() {
           </div>
         )}
 
-        {/* State: Column Selection */}
         {state === STATES.COLUMN_SELECT && previewData && (
           <>
             {error && (
@@ -242,10 +245,8 @@ function App() {
           </>
         )}
 
-        {/* State: Processing */}
         {state === STATES.PROCESSING && <ProgressBar job={jobStatus} />}
 
-        {/* State: Results */}
         {state === STATES.RESULTS && results && (
           <ResultsDashboard data={results} onReset={handleReset} />
         )}

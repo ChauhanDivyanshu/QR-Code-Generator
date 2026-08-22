@@ -1,3 +1,4 @@
+import React from "react";
 import "./ColumnSelector.css";
 
 function ColumnSelector({
@@ -14,14 +15,12 @@ function ColumnSelector({
   const { filename, columns, preview_rows, total_rows, column_names } =
     previewData;
 
-  // Selected QR Column Sample
   const getQrPreview = () => {
     if (!qrColumn) return null;
     const col = columns.find((c) => c.name === qrColumn);
     return col?.samples[0] || "No data";
   };
 
-  // Get sample for Filename ID column
   const getIdSample = (index = 0) => {
     if (!idColumn) return `AUTO${index + 1}`;
     const col = columns.find((c) => c.name === idColumn);
@@ -29,7 +28,6 @@ function ColumnSelector({
     return val && val.trim() !== "" ? val.trim() : `AUTO${index + 1}`;
   };
 
-  // Clean Filename Example (NO "QR1_" prefix)
   const example1 = `${getIdSample(0)}.png`;
   const example2 = `${getIdSample(1)}.png`;
   const example3 = `${getIdSample(2)}.png`;
@@ -48,9 +46,8 @@ function ColumnSelector({
         <p>Select which columns to use from your file</p>
       </div>
 
-      {/* Column Selection Cards */}
+      {/* Selector Cards */}
       <div className="selector-cards">
-        {/* QR Content Column */}
         <div className="selector-card selector-card--primary">
           <div className="selector-card-header">
             <span className="selector-badge selector-badge--required">
@@ -81,7 +78,6 @@ function ColumnSelector({
           )}
         </div>
 
-        {/* Filename ID Column */}
         <div className="selector-card selector-card--secondary">
           <div className="selector-card-header">
             <span className="selector-badge selector-badge--optional">
@@ -115,7 +111,7 @@ function ColumnSelector({
         </div>
       </div>
 
-      {/* Filename Format Preview */}
+      {/* Filename Preview */}
       <div className="filename-preview">
         <div className="filename-preview-label">Filename Format Preview</div>
         <div className="filename-preview-examples">
@@ -181,7 +177,7 @@ function ColumnSelector({
         </div>
       </div>
 
-      {/* QR Size */}
+      {/* QR Scale - Medium (6) Default */}
       <div className="qr-size-section">
         <label className="qr-size-label">QR Code Scale</label>
         <select
@@ -189,13 +185,13 @@ function ColumnSelector({
           value={qrSize}
           onChange={(e) => onSizeChange(Number(e.target.value))}
         >
-          <option value={4}>Small (Scale 4 - Fastest for 200k+ batches)</option>
+          <option value={4}>Small (Scale 4 - Fastest for large batches)</option>
           <option value={6}>Medium (Scale 6 - Standard)</option>
           <option value={8}>Large (Scale 8 - High Resolution)</option>
         </select>
       </div>
 
-      {/* Action Buttons */}
+      {/* Actions */}
       <div className="selector-actions">
         <button className="btn-cancel" onClick={onCancel}>
           Cancel

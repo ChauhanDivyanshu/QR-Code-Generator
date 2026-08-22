@@ -2,9 +2,12 @@
 color 0A
 cls
 echo ================================================================
-echo    QR CODE GENERATOR - BUILDING EXE
+echo    QR CODE GENERATOR - HIGH PERFORMANCE BUILD SCRIPT
 echo ================================================================
 echo.
+
+REM Automatically stop running EXE if open in background
+taskkill /F /IM QR_Code_Generator.exe /T >nul 2>&1
 
 echo [1/5] Building React Frontend...
 cd frontend
@@ -17,7 +20,7 @@ if errorlevel 1 (
 echo Frontend done!
 echo.
 
-echo [2/5] Copying files...
+echo [2/5] Copying files to backend...
 cd ..
 if exist "backend\static" rmdir /s /q backend\static
 mkdir backend\static
@@ -33,18 +36,28 @@ if exist "QR_Code_Generator.spec" del /q QR_Code_Generator.spec
 echo Cleaned!
 echo.
 
-echo [4/5] Installing dependencies...
-pip install --quiet flask flask-cors openpyxl pandas segno qrcode pillow werkzeug pyinstaller
-echo Done!
+echo [4/5] Checking Dependencies...
+pip install --quiet flask flask-cors openpyxl pandas segno qrcode pillow werkzeug pyinstaller python-calamine
+echo Dependencies OK!
 echo.
 
-echo [5/5] Building EXE (3-5 minutes)...
+echo [5/5] Building EXE (This takes ~1 minute)...
+echo.
+
 pyinstaller --onefile --noconsole ^
   --name "QR_Code_Generator" ^
   --add-data "static;static" ^
+  --exclude-module torch ^
+  --exclude-module tensorflow ^
+  --exclude-module transformers ^
+  --exclude-module scipy ^
+  --exclude-module sklearn ^
+  --exclude-module matplotlib ^
+  --exclude-module cv2 ^
   --hidden-import=openpyxl ^
   --hidden-import=openpyxl.cell._writer ^
   --hidden-import=pandas ^
+  --hidden-import=python_calamine ^
   --hidden-import=segno ^
   --hidden-import=qrcode ^
   --hidden-import=qrcode.image.pil ^
@@ -54,6 +67,7 @@ pyinstaller --onefile --noconsole ^
   --collect-all=flask ^
   --collect-all=werkzeug ^
   --collect-all=segno ^
+  --collect-all=python_calamine ^
   app.py
 
 if errorlevel 1 (
@@ -64,9 +78,9 @@ if errorlevel 1 (
 
 echo.
 echo ================================================================
-echo    BUILD COMPLETE!
+echo    BUILD SUCCESSFUL!
 echo ================================================================
-echo    EXE: %CD%\dist\QR_Code_Generator.exe
+echo    EXE Location: %CD%\dist\QR_Code_Generator.exe
 echo ================================================================
 start "" "%CD%\dist"
 pause
